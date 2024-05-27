@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User{
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  photo String? @default("")
+  role UserRole @default(USER)
+  action Action @default(Activate)
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  adoptionRequest    AdoptionRequest[]
+
+  @@map("users")
+}
+
+model Pet {
+  id     String @id @default(uuid())
+  name                String
+  species             Species @default(OTHER)
+  breed               String
+  photos              String  @default("")
+  age                 Int @default(0)
+  size                Size @default(SMALL)
+  gender              Gender @default(UNKNOWN)
+  location            String
+  description         String
+  healthStatus        String
+  isDeleted           Boolean @default(false)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  adoptionRequest    AdoptionRequest[]
+  @@map("pets")
+}
+
+model AdoptionRequest {
+  id    String @id @default(uuid())
+  userId                  String
+  petId                   String
+  status                  Status        @default(PENDING)
+  additionalInfo          String?
+  agreementToTerms        Boolean       @default(false)
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  user                    User          @relation(fields: [userId], references: [id])
+  pet                     Pet           @relation(fields: [petId], references: [id])
+}
+
+enum UserRole {
+  ADMIN
+  MANEGER
+  USER
+}
+enum Action {
+  Activate
+  Deactivate
+}
+
+enum Size {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+enum Gender {
+  MALE
+  FEMALE
+   UNKNOWN
+}
+enum Species {
+  DOG
+  CAT
+  BIRD
+  RABBIT
+  REPTILE
+  FISH
+  OTHER
+}
