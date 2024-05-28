@@ -10,7 +10,7 @@ const adoption_routes_1 = require("../../module/Adoption/adoption.routes");
 const router = express_1.default.Router();
 const moduleRoute = [
     {
-        path: "",
+        path: "/users",
         element: user_routes_1.userRoutes,
     },
     {
@@ -18,7 +18,7 @@ const moduleRoute = [
         element: pet_routes_1.petRoutes,
     },
     {
-        path: "",
+        path: "/adoption",
         element: adoption_routes_1.adoptionRoutes,
     },
 ];

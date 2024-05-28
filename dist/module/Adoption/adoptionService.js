@@ -34,8 +34,35 @@ const adoptionRequest = (user, payload) => __awaiter(void 0, void 0, void 0, fun
     });
     return result;
 });
-const getAllAdoptionRequest = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma.adoptionRequest.findMany({});
+const getAllAdoptionRequestAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma.adoptionRequest.findMany({
+        include: {
+            user: true,
+            pet: true,
+        },
+    });
+    return result;
+});
+const getAllAdoptionRequest = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma.adoptionRequest.findMany({
+        where: {
+            userId: user.id,
+        },
+        include: {
+            pet: true,
+        },
+    });
+    return result;
+});
+const getSingleAdoptionPet = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma.adoptionRequest.findUniqueOrThrow({
+        where: {
+            id,
+        },
+        include: {
+            pet: true,
+        },
+    });
     return result;
 });
 const updateRequestStatus = (id, status) => __awaiter(void 0, void 0, void 0, function* () {
@@ -60,4 +87,6 @@ exports.adoptionService = {
     adoptionRequest,
     getAllAdoptionRequest,
     updateRequestStatus,
+    getAllAdoptionRequestAdmin,
+    getSingleAdoptionPet,
 };

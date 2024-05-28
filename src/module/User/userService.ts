@@ -195,7 +195,17 @@ const updateUserRoles = async (id: string, UserRole: UserRole) => {
 };
 
 const allUsers = async () => {
-  const result = await prisma.user.findMany({});
+  const result = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      photo: true,
+      role: true,
+      action: true,
+      createdAt: true,
+    },
+  });
   return result;
 };
 

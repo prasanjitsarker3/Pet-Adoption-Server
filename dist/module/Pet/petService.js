@@ -42,10 +42,15 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.petService = void 0;
 const client_1 = require("@prisma/client");
 const petConstant_1 = __importStar(require("./petConstant"));
+const AppError_1 = __importDefault(require("../../App/Error/AppError"));
+const http_status_1 = __importDefault(require("http-status"));
 const prisma = new client_1.PrismaClient();
 const addPetInToDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma.pet.create({
@@ -56,17 +61,20 @@ const addPetInToDB = (payload) => __awaiter(void 0, void 0, void 0, function* ()
 const getAllPets = (params, options) => __awaiter(void 0, void 0, void 0, function* () {
     const { page, limit, skip, sortBy, sortOrder } = (0, petConstant_1.default)(options);
     const { searchTerm } = params, filterData = __rest(params, ["searchTerm"]);
+    console.log("Search", searchTerm);
     const andCondition = [];
-    if (params.searchTerm) {
+    // Add search conditions
+    if (searchTerm) {
         andCondition.push({
             OR: petConstant_1.petSearchingField.map((field) => ({
                 [field]: {
-                    contains: params.searchTerm,
+                    contains: searchTerm,
                     mode: "insensitive",
                 },
             })),
         });
     }
+    // Add filter conditions
     if (Object.keys(filterData).length > 0) {
         andCondition.push({
             AND: Object.keys(filterData).map((key) => ({
@@ -76,30 +84,38 @@ const getAllPets = (params, options) => __awaiter(void 0, void 0, void 0, functi
             })),
         });
     }
+    andCondition.push({
+        isDeleted: false,
+    });
     const whereCondition = andCondition.length > 0 ? { AND: andCondition } : {};
+    // Fetch data from the database
     const result = yield prisma.pet.findMany({
         where: whereCondition,
         skip,
         take: limit,
-        orderBy: sortBy && sortOrder
-            ? {
-                [sortBy]: sortOrder,
-            }
-            : {
-                createdAt: "asc",
-            },
+        orderBy: sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "asc" },
     });
-    const total = yield prisma.pet.count({
-        where: whereCondition,
-    });
+    // Fetch the total count of records
+    const total = yield prisma.pet.count({ where: whereCondition });
     return {
         meta: {
             page,
             limit,
             total,
         },
-        data: result,
+        result,
     };
+});
+const getSinglePet = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const petData = yield prisma.pet.findFirstOrThrow({
+        where: {
+            id,
+        },
+    });
+    if (!petData) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Pet Data Not Found!");
+    }
+    return petData;
 });
 const updatePetFromDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     yield prisma.pet.findUniqueOrThrow({
@@ -115,8 +131,26 @@ const updatePetFromDB = (id, payload) => __awaiter(void 0, void 0, void 0, funct
     });
     return result;
 });
+const softDeletePet = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const petData = yield prisma.pet.findFirstOrThrow({
+        where: {
+            id,
+        },
+    });
+    const result = yield prisma.pet.update({
+        where: {
+            id: petData.id,
+        },
+        data: {
+            isDeleted: true,
+        },
+    });
+    return result;
+});
 exports.petService = {
     addPetInToDB,
     getAllPets,
     updatePetFromDB,
+    getSinglePet,
+    softDeletePet,
 };

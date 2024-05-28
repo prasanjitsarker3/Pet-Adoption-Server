@@ -38,9 +38,20 @@ const getAllPets = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
+const getSinglePets = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield petService_1.petService.getSinglePet(id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Single Pets retrieved successfully",
+        data: result,
+    });
+}));
 const updatePet = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { petId } = req.params;
     const result = yield petService_1.petService.updatePetFromDB(petId, req.body);
+    console.log(result);
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
@@ -48,8 +59,21 @@ const updatePet = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void
         data: result,
     });
 }));
+const deletePet = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield petService_1.petService.softDeletePet(id);
+    console.log(result);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Pet delete successfully",
+        data: result,
+    });
+}));
 exports.petController = {
     addPetInToDB,
     getAllPets,
     updatePet,
+    getSinglePets,
+    deletePet,
 };

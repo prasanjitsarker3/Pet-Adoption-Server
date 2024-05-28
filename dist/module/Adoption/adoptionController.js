@@ -26,12 +26,32 @@ const adoptionRequest = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0
         data: result,
     });
 }));
-const getAdoption = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield adoptionService_1.adoptionService.getAllAdoptionRequest();
+const getAdoptionAll = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield adoptionService_1.adoptionService.getAllAdoptionRequestAdmin();
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
         message: "Adoption requests retrieved successfully",
+        data: result,
+    });
+}));
+const getAdoption = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const result = yield adoptionService_1.adoptionService.getAllAdoptionRequest(user);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Adoption requests retrieved successfully",
+        data: result,
+    });
+}));
+const getSingleAdoption = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield adoptionService_1.adoptionService.getSingleAdoptionPet(id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Single Adoption retrieved successfully",
         data: result,
     });
 }));
@@ -49,4 +69,6 @@ exports.adoptionController = {
     adoptionRequest,
     getAdoption,
     changeAdoptionStatus,
+    getAdoptionAll,
+    getSingleAdoption,
 };

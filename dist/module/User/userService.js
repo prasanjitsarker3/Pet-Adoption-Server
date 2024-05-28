@@ -40,12 +40,12 @@ const userRegistration = (payload) => __awaiter(void 0, void 0, void 0, function
     return result;
 });
 const userLogin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log({ payload });
     const userData = yield prisma.user.findUniqueOrThrow({
         where: {
             email: payload.email,
         },
     });
+    console.log(userData);
     if (!userData) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User not found !");
     }
@@ -56,6 +56,7 @@ const userLogin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const jwtPayload = {
         id: userData.id,
         name: userData.name,
+        role: userData.role,
         email: userData.email,
     };
     const accessToken = (0, createToken_1.createToken)(jwtPayload, config_1.default.jwt.accessToken, config_1.default.jwt.accessTokenExpireDate);
@@ -63,18 +64,49 @@ const userLogin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         id: userData.id,
         name: userData.name,
         email: userData.email,
+        role: userData.role,
         token: accessToken,
     };
+});
+const changeUserPassword = (user, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const userData = yield prisma.user.findFirstOrThrow({
+        where: {
+            email: user.email,
+            // action:Action
+        },
+    });
+    if (!userData) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User Data Not Found !");
+    }
+    const isCorrectPassword = yield bcrypt_1.default.compare(payload.currentPassword, userData.password);
+    console.log("Check:", isCorrectPassword);
+    if (!isCorrectPassword) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Password doesn't match !");
+    }
+    const hashPassword = yield bcrypt_1.default.hash(payload.newPassword, 12);
+    console.log(hashPassword);
+    const result = yield prisma.user.update({
+        where: {
+            email: userData.email,
+        },
+        data: {
+            password: hashPassword,
+            // needPasswordChange: false,
+        },
+    });
+    return result;
 });
 const getUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma.user.findUnique({
         where: {
             id: user.id,
+            email: user.email,
         },
         select: {
             id: true,
             name: true,
             email: true,
+            role: true,
             createdAt: true,
             updateAt: true,
         },
@@ -87,24 +119,92 @@ const updatedUserProfile = (user, payload) => __awaiter(void 0, void 0, void 0, 
             id: user.id,
         },
     });
+    console.log("Pay", payload);
     const result = yield prisma.user.update({
         where: {
             id: user.id,
         },
         data: payload,
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            createdAt: true,
-            updateAt: true,
-        },
+        // select: {
+        //   id: true,
+        //   name: true,
+        //   email: true,
+        //   photo: true,
+        //   createdAt: true,
+        //   updateAt: true,
+        // },
     });
     return result;
+});
+const updateUserAction = (id, Action) => __awaiter(void 0, void 0, void 0, function* () {
+    const userData = yield prisma.user.findFirstOrThrow({
+        where: {
+            id,
+        },
+    });
+    // console.log("AC", Action);
+    if (!userData) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Data Not Found!");
+    }
+    const result = yield prisma.user.update({
+        where: {
+            id,
+        },
+        data: Action,
+    });
+    // console.log(result);
+    return result;
+});
+const updateUserRoles = (id, UserRole) => __awaiter(void 0, void 0, void 0, function* () {
+    const userData = yield prisma.user.findFirstOrThrow({
+        where: {
+            id,
+        },
+    });
+    if (!userData) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Data Not Found!");
+    }
+    const result = yield prisma.user.update({
+        where: {
+            id,
+        },
+        data: UserRole,
+    });
+    return result;
+});
+const allUsers = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma.user.findMany({});
+    return result;
+});
+const profileMetaData = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const userCount = yield prisma.user.count();
+    const petCount = yield prisma.pet.count();
+    const adoptionCount = yield prisma.adoptionRequest.count();
+    const piaChart = yield prisma.pet.groupBy({
+        by: ["species"],
+        _count: {
+            id: true,
+        },
+    });
+    const formattedPiaData = piaChart.map((count) => ({
+        status: count.species,
+        count: Number(count._count.id),
+    }));
+    return {
+        user: userCount,
+        pet: petCount,
+        adoption: adoptionCount,
+        piaData: formattedPiaData,
+    };
 });
 exports.userService = {
     userRegistration,
     userLogin,
+    changeUserPassword,
     getUser,
     updatedUserProfile,
+    updateUserAction,
+    updateUserRoles,
+    allUsers,
+    profileMetaData,
 };

@@ -16,7 +16,7 @@ const http_status_1 = __importDefault(require("http-status"));
 const AppError_1 = __importDefault(require("../Error/AppError"));
 const verifyToken_1 = require("../Utilities/verifyToken");
 const config_1 = __importDefault(require("../../config"));
-const auth = () => {
+const auth = (...roles) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const token = req.headers.authorization;
@@ -24,9 +24,9 @@ const auth = () => {
                 throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "Your are not authorization");
             }
             const verifyUser = (0, verifyToken_1.verifyToken)(token, config_1.default.jwt.accessToken);
-            //   console.log(verifyUser);
+            console.log(verifyUser);
             req.user = verifyUser;
-            if (!verifyUser) {
+            if (roles.length && !roles.includes(verifyUser.role)) {
                 throw new AppError_1.default(http_status_1.default.FORBIDDEN, "Forbidden !");
             }
             next();

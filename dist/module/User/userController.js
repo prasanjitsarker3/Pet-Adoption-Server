@@ -35,6 +35,17 @@ const userLogin = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void
         data: result,
     });
 }));
+const changePassword = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const result = yield userService_1.userService.changeUserPassword(user, req.body);
+    console.log("result", result);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "User password change in successfully",
+        data: result,
+    });
+}));
 const getUser = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     const result = yield userService_1.userService.getUser(user);
@@ -48,6 +59,7 @@ const getUser = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0
 const updateUser = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     const result = yield userService_1.userService.updatedUserProfile(user, req.body);
+    console.log("result");
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -55,9 +67,55 @@ const updateUser = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
+const updateUserAction = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    console.log(id);
+    console.log("R", req.body);
+    const result = yield userService_1.userService.updateUserAction(id, req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "User status updated successfully",
+        data: result,
+    });
+}));
+const updateUserRoles = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield userService_1.userService.updateUserRoles(id, req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "User roles updated successfully",
+        data: result,
+    });
+}));
+const allUsers = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield userService_1.userService.allUsers();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Users fetch successfully",
+        data: result,
+    });
+}));
+const metaData = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const result = yield userService_1.userService.profileMetaData(user);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Meat data fetch successfully",
+        data: result,
+    });
+}));
 exports.userController = {
     userRegistration,
     userLogin,
+    changePassword,
     getUser,
     updateUser,
+    updateUserAction,
+    updateUserRoles,
+    allUsers,
+    metaData,
 };
