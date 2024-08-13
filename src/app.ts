@@ -8,7 +8,10 @@ const app: Application = express();
 
 // app.use(cors());
 app.use(
-  cors({ origin: "https://adoption-client.vercel.app", credentials: true })
+  cors({
+    origin: "https://adoption-client.vercel.app",
+    credentials: true,
+  })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -20,4 +20,6 @@ router.patch("/profile", (0, validationRequest_1.default)(userValidation_1.userU
 router.patch("/update-action/:id", (0, auth_1.default)(client_1.UserRole.ADMIN, client_1.UserRole.MANEGER), userController_1.userController.updateUserAction);
 router.patch("/update-role/:id", (0, auth_1.default)(client_1.UserRole.ADMIN, client_1.UserRole.MANEGER), userController_1.userController.updateUserRoles);
 router.get("/meta", (0, auth_1.default)(client_1.UserRole.ADMIN, client_1.UserRole.MANEGER), userController_1.userController.metaData);
+router.post("/create", userController_1.userController.createContact);
+router.get("/contact", userController_1.userController.getContact);
 exports.userRoutes = router;

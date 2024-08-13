@@ -106,6 +106,25 @@ const metaData = catchAsync(
   }
 );
 
+const createContact = catchAsync(async (req: Request, res: Response) => {
+  const result = await userService.contactInformation(req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Message Send Successfully",
+    data: result,
+  });
+});
+const getContact = catchAsync(async (req: Request, res: Response) => {
+  const result = await userService.allContact();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Message Send Successfully",
+    data: result,
+  });
+});
+
 export const userController = {
   userRegistration,
   userLogin,
@@ -116,4 +135,7 @@ export const userController = {
   updateUserRoles,
   allUsers,
   metaData,
+
+  createContact,
+  getContact,
 };

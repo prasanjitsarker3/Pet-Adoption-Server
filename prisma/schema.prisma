@@ -62,6 +62,19 @@ model AdoptionRequest {
   pet                     Pet           @relation(fields: [petId], references: [id])
 }
 
+
+model Contact {
+  id String @id @default(uuid())
+  name String 
+  email String
+  phone String
+  organization String
+  details String
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  @@map("contacts")
+}
+
 enum UserRole {
   ADMIN
   MANEGER

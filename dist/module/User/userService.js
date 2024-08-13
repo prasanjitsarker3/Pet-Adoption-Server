@@ -173,7 +173,17 @@ const updateUserRoles = (id, UserRole) => __awaiter(void 0, void 0, void 0, func
     return result;
 });
 const allUsers = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma.user.findMany({});
+    const result = yield prisma.user.findMany({
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            photo: true,
+            role: true,
+            action: true,
+            createdAt: true,
+        },
+    });
     return result;
 });
 const profileMetaData = (user) => __awaiter(void 0, void 0, void 0, function* () {
@@ -197,6 +207,17 @@ const profileMetaData = (user) => __awaiter(void 0, void 0, void 0, function* ()
         piaData: formattedPiaData,
     };
 });
+const contactInformation = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma.contact.create({
+        data: payload,
+    });
+    console.log(result);
+    return result;
+});
+const allContact = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma.contact.findMany({});
+    return result;
+});
 exports.userService = {
     userRegistration,
     userLogin,
@@ -207,4 +228,6 @@ exports.userService = {
     updateUserRoles,
     allUsers,
     profileMetaData,
+    contactInformation,
+    allContact,
 };

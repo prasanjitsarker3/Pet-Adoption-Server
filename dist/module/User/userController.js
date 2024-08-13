@@ -108,6 +108,24 @@ const metaData = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 
         data: result,
     });
 }));
+const createContact = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield userService_1.userService.contactInformation(req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Message Send Successfully",
+        data: result,
+    });
+}));
+const getContact = (0, catchAysnc_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield userService_1.userService.allContact();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Message Send Successfully",
+        data: result,
+    });
+}));
 exports.userController = {
     userRegistration,
     userLogin,
@@ -118,4 +136,6 @@ exports.userController = {
     updateUserRoles,
     allUsers,
     metaData,
+    createContact,
+    getContact,
 };

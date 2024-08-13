@@ -9,7 +9,11 @@ const globalErrorHandler_1 = __importDefault(require("./App/Middlewares/globalEr
 const notFound_1 = __importDefault(require("./App/Middlewares/notFound"));
 const routes_1 = __importDefault(require("./App/routes"));
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+// app.use(cors());
+app.use((0, cors_1.default)({
+    origin: ["https://adoption-client.vercel.app", "https://www.wevloper.com"],
+    credentials: true,
+}));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.get("/", (req, res) => {

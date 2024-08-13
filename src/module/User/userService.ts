@@ -1,5 +1,5 @@
 import { Action, PrismaClient, UserRole } from "@prisma/client";
-import { ILogin, IRegister } from "./userInterface";
+import { IContact, ILogin, IRegister } from "./userInterface";
 import bcrypt from "bcrypt";
 import AppError from "../../App/Error/AppError";
 import httpStatus from "http-status";
@@ -232,6 +232,18 @@ const profileMetaData = async (user: IUser) => {
   };
 };
 
+const contactInformation = async (payload: any) => {
+  const result = await prisma.contact.create({
+    data: payload,
+  });
+  console.log(result);
+  return result;
+};
+const allContact = async () => {
+  const result = await prisma.contact.findMany({});
+  return result;
+};
+
 export const userService = {
   userRegistration,
   userLogin,
@@ -242,4 +254,7 @@ export const userService = {
   updateUserRoles,
   allUsers,
   profileMetaData,
+
+  contactInformation,
+  allContact,
 };

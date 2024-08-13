@@ -60,4 +60,7 @@ router.get(
   userController.metaData
 );
 
+router.post("/create", userController.createContact);
+router.get("/contact", userController.getContact);
+
 export const userRoutes = router;
