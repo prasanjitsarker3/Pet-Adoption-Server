@@ -11,6 +11,7 @@ import { IUser } from "../Adoption/adoptionInterafce";
 const prisma = new PrismaClient();
 
 const userRegistration = async (payload: IRegister) => {
+  console.log("Check:", payload);
   const hashPassword = await bcrypt.hash(payload.password, 12);
   const userData = {
     name: payload.name,

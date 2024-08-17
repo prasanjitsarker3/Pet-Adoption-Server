@@ -11,7 +11,7 @@ const routes_1 = __importDefault(require("./App/routes"));
 const app = (0, express_1.default)();
 // app.use(cors());
 app.use((0, cors_1.default)({
-    origin: ["https://adoption-client.vercel.app", "https://www.wevloper.com"],
+    origin: "https://adoption-client.vercel.app",
     credentials: true,
 }));
 app.use(express_1.default.json());
